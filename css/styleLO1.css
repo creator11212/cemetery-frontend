@@ -1,0 +1,1121 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+
+/* ==========================================================================
+   01. GLOBAL & RESET
+   ========================================================================== */
+* { 
+    margin: 0; 
+    padding: 0; 
+    outline: none; 
+    font-family: "Poppins", sans-serif; 
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+a { 
+    color: white; 
+    text-decoration: none; 
+}
+
+a:hover { 
+    text-decoration: underline; 
+    color: rgba(255, 255, 255, 0.8); 
+}
+
+/* ==========================================================================
+   02. BACKGROUND & ANIMATIONS (Global)
+   ========================================================================== */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+    background: url('../Images/Mountain.jpg') no-repeat center/cover;
+    filter: blur(0px); 
+    transform: scale(1.02); 
+    transition: filter 1.2s cubic-bezier(0.4, 0, 0.2, 1), transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.is-mainpage::before {
+    filter: blur(24px);
+    transform: scale(1.1); 
+}
+
+/* ==========================================================================
+   03. SWEETALERT & TOAST COMPONENTS
+   ========================================================================== */
+.capsule-toast {
+    width: 300px !important;
+    padding: 5px 20px !important;
+    border-radius: 50px !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3) !important;
+    color: #ffffff !important;
+}
+
+.capsule-toast .swal2-title,
+.capsule-toast .swal2-html-container {
+    color: #ffffff !important;
+    font-size: 14px !important;
+}
+
+.capsule-toast .swal2-timer-progress-bar {
+    background: rgba(255, 255, 255, 0.6) !important; 
+}
+
+/* ==========================================================================
+   04. LOGIN PAGE & AUTHENTICATION
+   ========================================================================== */
+.loginpage {
+    width: 100vw; height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 5;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.loginpage.exit {
+    opacity: 0;
+    filter: blur(10px); 
+    transform: translateY(-30px) scale(0.98);
+    pointer-events: none;
+}
+
+.loginpage .Choose { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 30px; 
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.loginpage .Choose.hide {
+    opacity: 0; 
+    visibility: hidden; 
+    pointer-events: none; 
+    transform: scale(0.95);
+}
+
+.loginpage .Choose h1 {
+    font-size: 70px; 
+    margin-bottom: 35px; 
+    letter-spacing: 3px;
+    -webkit-text-stroke: 1px white;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.guest, .worker {
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+    color: white; gap: 8px; text-align: center;
+    padding: 20px; width: 400px; border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+}
+
+.guest p:nth-of-type(2), .worker a { 
+    width: 100%; 
+    margin-top: 5px; 
+}
+
+.worker { 
+    height: 100px; 
+    position: relative; 
+    transition: all 0.5s; 
+}
+
+.passfield { 
+    display: none; 
+    width: 100%; 
+    opacity: 0; 
+    gap: 12px; 
+    align-items: stretch; 
+}
+
+.passfield input {
+    flex: 1; border-radius: 8px; color: white;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 12px 15px; border: none; outline: none;
+    transition: all 0.3s ease;
+}
+
+.passfield input:focus {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+}
+
+.passfield input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.worker.active > i, .worker.active > p { 
+    animation: fadeUpOut 0.4s forwards; 
+    pointer-events: none; 
+}
+
+.worker.active a { 
+    transform: translateY(-60px); 
+    transition: transform 0.4s ease; 
+    z-index: 2; 
+    text-decoration: none; 
+}
+
+.worker.active .passfield {
+    display: flex; position: absolute; bottom: 20px; left: 20px; right: 20px;
+    width: auto; align-items: center;
+    animation: slideInUp 0.6s ease 0.2s forwards;
+}
+
+.loginpage .icon-btn {
+    background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px; height: 43px; aspect-ratio: 1/1;
+    display: flex; justify-content: center; align-items: center;
+    cursor: pointer; flex-shrink: 0; color: white;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.loginpage .icon-btn:hover { 
+    background: rgba(255, 255, 255, 0.3); 
+    border-color: rgba(255, 255, 255, 0.6); 
+}
+
+.loginpage .icon-btn:active { 
+    transform: scale(0.92); 
+}
+
+@keyframes fadeUpOut { 
+    to { opacity: 0; transform: translateY(-20px); visibility: hidden; } 
+}
+@keyframes slideInUp { 
+    from { opacity: 0; transform: translateY(20px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}
+
+/* ==========================================================================
+   05. CHANGE PASSWORD MODAL
+   ========================================================================== */
+.changepass {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -40%);
+    background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(24px); border: 1.5px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 35px; width: 450px;
+    display: flex; flex-direction: column; gap: 25px; z-index: 20;
+    opacity: 0; visibility: hidden; pointer-events: none; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.changepass.show { 
+    opacity: 1; 
+    visibility: visible; 
+    pointer-events: auto; 
+    transform: translate(-50%, -50%); 
+}
+
+.passipt { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 18px; 
+}
+
+.iptgroup { 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+}
+
+.label { 
+    color: white; 
+    font-size: 14px; 
+    width: 170px; 
+    text-align: right; 
+    font-weight: 300; 
+    letter-spacing: 0.5px; 
+}
+
+.iptgroup input {
+    flex: 1; background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 10px 15px; border-radius: 8px; color: white; transition: all 0.3s ease;
+}
+
+.iptgroup input:focus { 
+    background: rgba(255, 255, 255, 0.25); 
+    border-color: rgba(255, 255, 255, 0.9); 
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.3); 
+}
+
+.iptgroup input::placeholder { 
+    color: rgba(255, 255, 255, 0.6); 
+    font-size: 13px; 
+}
+
+.passbt { 
+    display: flex; 
+    justify-content: space-between; 
+    padding: 0 50px; 
+    margin-top: 10px; 
+}
+
+.changepass .icon-btn {
+    background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%; height: 45px; aspect-ratio: 1/1; color: white; cursor: pointer;
+    display: flex; justify-content: center; align-items: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.changepass .icon-btn:hover { 
+    background: rgba(255, 255, 255, 0.3); 
+    border-color: rgba(255, 255, 255, 0.6); 
+}
+
+.changepass .icon-btn:active { 
+    transform: scale(0.92); 
+}
+
+/* ==========================================================================
+   06. MAIN PAGE LAYOUT & CONTAINERS
+   ========================================================================== */
+.mainpage {
+    width: 96vw; max-width: 2850px; height: 85vh; max-height: 1000px;
+    margin: 0 auto; gap: 50px; align-items: stretch;
+    display: none;
+    opacity: 0; visibility: hidden; z-index: 10;
+    transition: opacity 0.6s ease, visibility 0.6s;
+}
+
+.mainpage.show { 
+    opacity: 1; 
+    visibility: visible; 
+}
+
+.datapart, .mapcontainer {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(5px); 
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+}
+
+.datapart {
+    display: flex; flex-direction: column; gap: 25px;
+    width: 25%; min-width: 250px; flex-shrink: 0; padding: 60px 30px;
+}
+
+.main1 { 
+    flex: 1; 
+    width: 100%; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: space-between; 
+    gap: 50px; 
+}
+
+.mapcontainer { 
+    width: 100%; height: 100%; min-height: 600px; 
+    display: flex; justify-content: center; align-items: center;
+}
+
+#map {
+    width: 95%;
+    height: 95%;
+    min-height: 550px;
+    border-radius: 12px;
+    z-index: 1;
+}
+
+/* ==========================================================================
+   07. SCROLLBAR COMPONENTS
+   ========================================================================== */
+.custom-scrollbar { 
+    width: 6px; height: 95%; margin: auto 15px; 
+    background: rgba(255, 255, 255, 0.1); 
+    border-radius: 10px; position: relative; 
+    flex-shrink: 0; z-index: 10; 
+}
+
+.scroll-thumb { 
+    width: 100%; height: 60px; 
+    background: rgba(255, 255, 255, 0.8); 
+    border-radius: 10px; position: absolute; cursor: pointer; 
+}
+
+.scroll-container { 
+    flex: 1; height: 100%; overflow-y: scroll; scrollbar-width: none; 
+    display: flex; flex-direction: column; align-items: center; padding: 25px 0; 
+}
+
+.scroll-container::after { 
+    content: ""; height: 35px; flex-shrink: 0; 
+}
+
+/* ==========================================================================
+   08. SEARCH BAR SYSTEM
+   ========================================================================== */
+.searchpart { 
+    display: flex; gap: 30px; width: 100%; 
+}
+
+.searchpart input {
+    flex: 1; padding: 12px 24px; border-radius: 999px; color: white; border: none;
+    background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(24px); border: 1.5px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2); transition: all 0.3s;
+}
+
+.searchpart input:hover { 
+    background: rgba(255, 255, 255, 0.25); 
+    transform: translateY(-3px); 
+}
+
+.searchpart input:focus { 
+    background: rgba(255, 255, 255, 0.2); 
+}
+
+.mainpage .searchpart .icon-btn {
+    background: rgba(255, 255, 255, 0.15); border: 1.5px solid rgba(255, 255, 255, 0.2); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+    border-radius: 50%; height: 43px; aspect-ratio: 1/1;
+    display: flex; justify-content: center; align-items: center;
+    cursor: pointer; flex-shrink: 0; color: white;
+    transition: all 0.2s;
+}
+
+.mainpage .searchpart .icon-btn:hover { 
+    background: rgba(255, 255, 255, 0.25); 
+    border-color: rgba(255, 255, 255, 0.4); 
+    transform: translateY(-3px); 
+    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.3);  
+}
+
+.mainpage .searchpart .icon-btn:active { 
+    background: rgba(255, 255, 255, 0.1); 
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(2px) scale(0.92); 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+}
+
+/* ==========================================================================
+   09. PLOT LIST SYSTEM (Data Display)
+   ========================================================================== */
+.actionbar { 
+    display: flex; gap: 12px; padding-bottom: 30px; 
+}
+
+.actionbar .icon-btn {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    gap: 8px; height: 40px; border-radius: 20px;
+    background: linear-gradient(
+        180deg, 
+        #e2e2e5 0%, #c8c9cc 30%, #a5a7ad 50%, #bfc2c7 70%, #d1d4d9 100%
+    ); 
+    background-attachment: local; border: 1px solid #9ea0a4;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 2px 4px rgba(0, 0, 0, 0.2);
+    color: #2c2e31; 
+    font-size: 14px; font-weight: 700; text-shadow: 0 0.5px 0 rgba(255, 255, 255, 0.3);
+    cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); outline: none;
+}
+
+.actionbar .icon-btn:active {
+    transform: translateY(1.5px);
+    background: linear-gradient(180deg, #d1d4d9 0%, #bfc2c7 50%, #e2e2e5 100%);
+    box-shadow: inset 0 1.5px 3px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(0, 0, 0, 0.05);
+    border-color: #9ea0a4;
+    transition: all 0.05s ease; 
+}
+
+#backbt:active {
+    background: rgba(255, 77, 77, 0.3); border-color: rgba(255, 77, 77, 0.5); color: #ff4d4d;
+}
+
+#backbt:active i { 
+    transform: rotate(-30deg); transition: transform 0.2s; 
+}
+
+.infopart { 
+    flex: 1; display: flex; flex-direction: column; overflow: hidden; 
+}
+
+.datadisplay {
+    flex: 1; display: flex; position: relative; overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+}
+
+.datadisplay.hide { 
+    display: none; opacity: 0; 
+}
+
+.plot-card {
+    width: 90%; height: 56px; margin: 0 auto 18px; padding: 0 20px;
+    background: linear-gradient(180deg, #e0e1e3 0%, #bdc0c5 100%);
+    border: 1.5px solid #555; border-top: 1.5px solid #fff; border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    display: flex; align-items: center; flex-shrink: 0; z-index: 2; box-sizing: border-box; transition: all 0.2s;
+}
+
+.plot-card:hover { 
+    background: #f0f1f3; transform: translateX(5px); 
+}
+
+.plot-label { 
+    font-size: 14px; color: #5d6168; margin: 0 8px 0 20px; font-weight: 500; 
+}
+
+.plot-number { 
+    font-size: 18px; font-weight: 800; color: #2c2e31; 
+}
+
+/* ==========================================================================
+   10. PLOT DETAIL SYSTEM (Sidebar Info & Edit)
+   ========================================================================== */
+.plotdetail { 
+    display: none; flex-direction: column; height: 100%; opacity: 0; transform: translateX(-20px); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+}
+
+.plotdetail.show { 
+    display: flex; opacity: 1; transform: translateX(0); 
+}
+
+.detail-header { 
+    display: flex; align-items: center; justify-content: center; padding-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 15px; 
+}
+
+.detail-header h2 { 
+    color: white; font-size: 20px; font-weight: 600; letter-spacing: 1px; 
+}
+
+.detail-content { 
+    flex: 1; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; padding-right: 5px; 
+}
+
+.info-row { 
+    display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+}
+
+.info-label { color: rgba(255, 255, 255, 0.6); font-size: 14px; }
+.info-val { color: white; font-weight: 500; }
+
+.occupants-container { 
+    display: flex; flex-direction: column; gap: 10px; margin-top: 5px; 
+}
+
+.occupant-card { 
+    background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; gap: 5px; transition: all 0.2s; 
+}
+
+.occ-header { 
+    display: flex; justify-content: flex-start; margin-bottom: 8px; border-bottom: 1px dashed rgba(255, 255, 255, 0.15); padding-bottom: 6px; 
+}
+
+.occ-pos { 
+    color: rgba(255, 255, 255, 0.8); font-size: 11px; background: rgba(255, 255, 255, 0.1); padding: 3px 8px; border-radius: 4px; letter-spacing: 0.5px; 
+}
+
+.occ-name { 
+    color: white; font-weight: 600; font-size: 16px; margin-bottom: 10px; letter-spacing: 0.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); 
+}
+
+.occ-dates { 
+    display: flex; flex-direction: column; gap: 6px; background: rgba(0, 0, 0, 0.15); padding: 8px; border-radius: 6px; 
+}
+
+.date-row { display: flex; justify-content: space-between; align-items: center; }
+.d-label { width: 75px; flex-shrink: 0; display: inline-block; }
+.d-val { text-align: right; font-family: "Poppins", sans-serif; font-size: 13px; letter-spacing: 0.5px; color: rgba(255, 255, 255, 0.85); }
+
+/* Edit Inputs */
+.edit-input { color-scheme: dark; }
+
+input[type="date"].edit-input::-webkit-calendar-picker-indicator {
+    cursor: pointer; filter: invert(1) opacity(0.6); transition: all 0.2s ease;
+}
+
+input[type="date"].edit-input::-webkit-calendar-picker-indicator:hover {
+    filter: invert(1) opacity(1);
+}
+
+.grave-num-input {
+    width: 25px; text-align: center; font-size: 11px; padding: 0; color: #fff; font-weight: 700;
+    border: none; border-bottom: 1px dashed rgba(255, 255, 255, 0.6); background: transparent; outline: none; transition: all 0.2s ease;
+}
+
+.grave-num-input:focus { border-bottom: 1px solid #fff; background: rgba(255, 255, 255, 0.1); }
+.grave-num-input::-webkit-inner-spin-button, .grave-num-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.grave-num-input[type=number] { -moz-appearance: textfield; }
+
+/* Custom Scrollbars for Detail View */
+.detail-content::-webkit-scrollbar, .occupants-container::-webkit-scrollbar { width: 6px; }
+.detail-content::-webkit-scrollbar-track, .occupants-container::-webkit-scrollbar-track { background: transparent; border-radius: 10px; }
+.detail-content::-webkit-scrollbar-thumb, .occupants-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+.detail-content::-webkit-scrollbar-thumb:hover, .occupants-container::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+.detail-content::-webkit-scrollbar-button, .occupants-container::-webkit-scrollbar-button { display: none; }
+.detail-content, .occupants-container { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.2) transparent; }
+
+/* Bottom Action Buttons (Grid Layout) */
+.info-footer { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 8px; 
+    position: relative; 
+    padding-top: 15px; 
+    margin-top: auto; 
+    border-top: 1px solid rgba(255, 255, 255, 0.1); 
+}
+
+.info-footer .icon-btn {
+    width: auto; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 10px; 
+    padding: 10px 0;
+    border-radius: 30px; 
+    background: rgba(255, 255, 255, 0.1); 
+    border: 1px solid rgba(255, 255, 255, 0.2); 
+    color: white; 
+    font-size: 14px; 
+    font-weight: 500; 
+    cursor: pointer; 
+    letter-spacing: 0.5px; 
+    transition: all 0.2s ease; 
+    box-sizing: border-box;
+}
+
+.info-footer .icon-btn:hover { 
+    background: rgba(255, 255, 255, 0.25); border-color: rgba(255, 255, 255, 0.5); box-shadow: 0 0 15px rgba(255, 255, 255, 0.1); 
+}
+
+.info-footer .icon-btn:active { 
+    transform: scale(0.98); background: rgba(255, 255, 255, 0.15); 
+}
+
+#closeDetailbt, #editbt { 
+    transition: all 0.3s ease; 
+}
+
+.info-footer.is-editing #closeDetailbt,
+.info-footer.is-editing #editbt { 
+    opacity: 0; pointer-events: none; 
+}
+
+.info-footer .btn-cancel, .info-footer .btn-save {
+    position: absolute; top: 15px; width: calc(50% - 6px); padding: 10px 25px; border-radius: 30px; 
+    display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; 
+    cursor: pointer; box-sizing: border-box; opacity: 0; pointer-events: none; transition: all 0.3s ease; 
+}
+
+.info-footer .btn-cancel { left: 0; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white; }
+.info-footer .btn-cancel:hover { background: rgba(255, 77, 77, 0.15); border-color: rgba(255, 77, 77, 0.4); color: white; box-shadow: 0 0 15px rgba(255, 77, 77, 0.2); }
+
+.info-footer .btn-save { right: 0; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white; }
+.info-footer .btn-save:hover { background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.4); color: white; box-shadow: 0 0 15px rgba(34, 197, 94, 0.2); }
+
+.info-footer.is-editing .btn-cancel,
+.info-footer.is-editing .btn-save { 
+    opacity: 1; pointer-events: auto;
+}
+
+/* ==========================================================================
+   11. MAP & GIS COMPONENTS (GPS, Routing, Markers)
+   ========================================================================== */
+#navbt {
+    background: rgba(59, 130, 246, 0.15);
+    border-color: rgba(59, 130, 246, 0.4); 
+    color: white; 
+    transition: all 0.3s ease;
+}
+#navbt:hover {
+    background: rgba(59, 130, 246, 0.3);
+    border-color: rgba(59, 130, 246, 0.6);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+.gps-pulse {
+    background: #3b82f6;
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2.5px solid #ffffff;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
+    animation: gps-pulse-anim 2s infinite;
+}
+
+@keyframes gps-pulse-anim {
+    0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0);}
+    100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+}
+
+.plot-label-custom {
+    background: transparent; border: none; box-shadow: none;
+}
+.plot-label-text {
+    color: #ffffff;
+    font-size: 10px; font-weight: 700; text-align: center;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    white-space: nowrap; pointer-events: none;
+}
+.plot-label-custom, 
+.plot-label-text {
+    pointer-events: none !important;
+}
+
+.selecting-start #map {
+    cursor: crosshair !important;
+}
+
+.custom-start-icon div {
+    background: #22c55e; width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid white; box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+}
+
+.selecting-start .leaflet-interactive,
+.selecting-start .leaflet-marker-icon,
+.selecting-start .leaflet-marker-pane {
+    pointer-events: none !important;
+}
+
+.route-animation {
+    animation: route-dash 1.5s linear infinite;
+}
+
+@keyframes route-dash {
+    to { stroke-dashoffset: -20; }
+}
+
+/* ==========================================================================
+   12. DARK MODE THEME (深色模式)
+   ========================================================================== */
+/* 1. 压暗背景：如果你想让背景图片在深色模式下更深邃 */
+body.dark-theme::before {
+    filter: blur(24px) brightness(0.5); /* 降低亮度 */
+}
+
+/* 2. 左侧列表卡片：从浅色金属渐变 -> 暗黑磨砂质感 */
+body.dark-theme .plot-card {
+    background: linear-gradient(180deg, #2c2e31 0%, #1a1b1e 100%);
+    border: 1.5px solid #444; 
+    border-top: 1.5px solid #555;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-theme .plot-label { 
+    color: #a5a7ad; 
+}
+
+body.dark-theme .plot-number { 
+    color: #ffffff; 
+}
+
+body.dark-theme .plot-card:hover { 
+    background: #3a3c40; 
+}
+
+/* 3. 浅色金属按钮变暗 (Upload 那些) */
+body.dark-theme .actionbar .icon-btn {
+    background: linear-gradient(180deg, #3a3c40 0%, #2c2e31 100%); 
+    border-color: #1a1b1e;
+    color: #e0e1e3; 
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-theme .actionbar .icon-btn:active {
+    background: linear-gradient(180deg, #1a1b1e 0%, #2c2e31 100%);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* 4. 🚨 终极魔法：Leaflet 地图暗黑滤镜 */
+/* 通过色相翻转和反相，把普通的明亮地图瞬间变成暗色科技风，且不影响你原本画的标记颜色！ */
+body.dark-theme .leaflet-tile-pane {
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+    transition: filter 0.5s ease;
+}
+
+/* =========================================
+   📱 MOBILE ADAPTATION: BOTTOM DRAWER UI
+   ========================================= */
+@media (max-width: 768px) {
+
+    /* === 01. GLOBAL & MAIN LAYOUT (Body & Containers) === */
+    html, body {
+        position: fixed !important;
+        width: 100%;
+        height: 100dvh !important;
+        overflow: hidden !important; 
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .mainpage {
+        display: block !important;
+        width: calc(100vw - 30px) !important; 
+        height: calc(100dvh - 95px) !important; 
+        margin: 15px auto 80px auto !important; 
+        padding: 0 !important; 
+        box-sizing: border-box !important;
+        overflow: visible !important;
+        border-radius: 24px !important;
+    }
+
+    .main1 {
+        width: 100% !important;
+        height: 100% !important; 
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important; 
+        gap: 15px !important; 
+        box-sizing: border-box !important;
+        padding-bottom: 8px !important; 
+        margin: 0 !important; 
+    }
+
+    /* === 02. TOP SEARCH BAR === */
+    .searchpart {
+        display: flex !important;
+        align-items: center !important;
+        gap: 5px !important; 
+        width: 100% !important;
+        box-sizing: border-box !important;
+        margin-top: 15px !important; 
+        margin-bottom: 5px !important; 
+        padding: 0 !important; 
+    }
+
+    .searchpart input {
+        flex: 1 1 auto !important; 
+        min-width: 0 !important; 
+        width: 100% !important;
+        height: 35px !important; 
+        box-sizing: border-box !important; 
+        font-size: 13px !important; 
+        padding: 0 15px !important; 
+        border-radius: 50px !important; 
+    }
+
+    .searchpart .icon-btn {
+        flex-shrink: 0 !important; 
+        width: 35px !important;
+        height: 35px !important;
+        font-size: 14px !important; 
+    }
+
+    /* === 03. MAP AREA === */
+    .mapcontainer {
+        flex: 1 !important; 
+        width: 100% !important;
+        display: flex !important;
+        margin: 0 !important; 
+        padding: 10px 12px !important; 
+        box-sizing: border-box !important;
+        min-height: 0 !important; 
+    }
+
+    #map {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important; 
+        border-radius: 16px !important; 
+    }
+
+    /* === 04. BOTTOM DRAWER CONTAINER & STATES === */
+    .datapart {
+        background: rgba(25, 28, 33, 0.85) !important; 
+        backdrop-filter: blur(15px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3) !important;
+        position: fixed !important;
+        bottom: 20px !important; 
+        left: 15px !important; 
+        width: calc(100vw - 30px) !important; 
+        margin: 0 !important; 
+        transform: none !important; 
+        max-height: 60vh !important; 
+        display: flex !important;
+        flex-direction: column !important;
+        border-radius: 24px !important;
+        z-index: 9999 !important;
+        padding: 12px 0 0 0 !important; 
+        box-sizing: border-box !important;
+        overflow: hidden !important; 
+        height: 55dvh !important; 
+        transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; 
+        will-change: height;
+    }
+
+    .datapart::before {
+        content: "";
+        display: block;
+        width: 40px;
+        height: 5px;
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 10px;
+        margin: 0 auto 10px auto;
+        flex-shrink: 0;
+        touch-action: none !important;
+    }
+
+    .datapart.is-expanded {
+        height: 85dvh !important;
+        max-height: 85dvh !important;
+    }
+
+    .datapart.is-collapsed {
+        height: 65px !important;
+        overflow: hidden !important;
+    }
+
+    /* === 05. DATA LIST & CUSTOM SCROLLBAR === */
+    .infopart {
+        width: 100% !important;
+        display: flex !important; 
+        flex-direction: column !important; 
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        flex: 1 !important; 
+    }
+
+    .datadisplay {
+        width: 100% !important;
+        display: flex !important; 
+        flex-direction: row !important; 
+        min-width: 0 !important;
+        min-height: 0 !important; 
+        box-sizing: border-box !important;
+        flex: 1 !important; 
+    }
+
+    .scroll-container {
+        flex: 1 !important; 
+        width: auto !important; 
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        padding: 5px 0 !important; 
+    }
+
+    .custom-scrollbar {
+        width: 12px !important; 
+        right: 4px !important;
+        z-index: 10001 !important; 
+    }
+
+    .scroll-thumb {
+        width: 100% !important;
+        touch-action: none !important; 
+    }
+
+    /* === 06. PLOT DETAILS & NAVIGATION BUTTONS === */
+    #plot-detail {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 10px 15px !important; 
+        overflow-y: auto !important;   
+    }
+
+    #plot-detail .detext {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        word-wrap: break-word !important; 
+    }
+
+    #plot-detail .navbt {
+        width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        justify-content: space-around !important; 
+        gap: 10px !important;
+        margin-top: 15px !important; 
+        padding: 0 10px !important;  
+    }
+
+    #plot-detail .navbt .icon-btn {
+        flex-shrink: 0 !important; 
+        width: 45px !important;    
+        height: 45px !important;
+    }
+
+    /* === 07. UPLOAD BUTTON ACTION BAR === */
+    .actionbar {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+        padding: 15px 15px 5px 15px !important; 
+        box-sizing: border-box !important;
+    }
+
+    #uploadbt {
+        display: flex !important;
+        width: 100% !important;       
+        max-width: none !important;   
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 12px 0 !important;   
+        border-radius: 50px !important; 
+        box-sizing: border-box !important;
+    }
+
+    /* === 08. UTILITIES (State Modifiers) === */
+    .infopart[style*="display: none"],
+    .datadisplay[style*="display: none"],
+    #plot-detail[style*="display: none"] {
+        display: none !important;
+    }
+
+    /* === 09. SWEETALERT2 POPUPS & TOASTS === */
+    .capsule-toast {
+        width: max-content !important;
+        max-width: 85vw !important;       
+        padding: 5px 12px !important;     
+        font-size: 11px !important;       
+        min-height: 28px !important;      
+        border-radius: 50px !important;   
+    }
+    
+    .capsule-toast .swal2-title {
+        font-size: 11px !important;       
+        line-height: 1.2 !important;      
+        margin: 0 !important;
+    }
+
+    .capsule-toast .swal2-icon {
+        transform: scale(0.7) !important; 
+        margin: 0 6px 0 0 !important;     
+    }
+
+    .swal2-popup:not(.swal2-toast) {
+        width: 80vw !important;           
+        padding: 1.5em 1em !important;    
+        border-radius: 16px !important;   
+    }
+
+    .swal2-popup:not(.swal2-toast) .swal2-title {
+        font-size: 18px !important;       
+        margin-bottom: 0.5em !important;
+    }
+    .swal2-popup:not(.swal2-toast) .swal2-html-container {
+        font-size: 14px !important;       
+        margin: 0.5em 0 !important;
+    }
+    .swal2-popup:not(.swal2-toast) .swal2-actions button {
+        font-size: 14px !important;       
+        padding: 8px 24px !important;     
+        border-radius: 50px !important;
+    }
+    
+    .swal2-popup:not(.swal2-toast) .swal2-icon {
+        transform: scale(0.7) !important; 
+        margin: 10px auto !important;
+    }
+
+    /* ==========================================
+       📱 登录页面：完美垂直+水平居中重构
+       ========================================== */
+
+    /* 1. 强制父容器占满全屏并开启绝对居中 */
+    .loginpage {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important; /* 🚨 核心：让内部内容垂直居中 */
+        align-items: center !important;     /* 🚨 核心：让内部内容水平居中 */
+        width: 100vw !important;
+        height: 100dvh !important;          /* 使用 dvh 避开浏览器工具栏干扰 */
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* 2. Choose 盒子：只负责宽度和内部间距 */
+    .loginpage .Choose {
+        transform: none !important;    
+        width: 85% !important;         
+        max-width: 340px !important;   
+        height: auto !important;       
+        margin: 0 !important;               /* 🚨 清除所有外边距，交给父级 Flex 居中 */
+        box-sizing: border-box !important;
+    }
+
+    .loginpage .Choose h1 {
+        font-size: 50px !important;    
+        margin-bottom: 20px !important;
+        text-align: center !important; 
+    }
+
+    /* 3. 保持毛玻璃盒子的自适应逻辑 */
+    .loginpage .guest,
+    .loginpage .worker {
+        width: 100% !important;        
+        height: auto !important;       
+        box-sizing: border-box !important; 
+        padding: 20px 15px !important; 
+        margin-bottom: 20px !important;
+        display: flex !important;
+        flex-direction: column !important; 
+        align-items: center !important;    
+        justify-content: center !important; /* 🚨 修复：确保盒子内的图标、文字、输入框整体垂直居中 */
+    }
+
+    /* 4. 输入框和按钮的尺寸修正 (拆分独立处理) */
+    .loginpage .worker input {
+        width: 100% !important;        
+        max-width: 100% !important;    
+        box-sizing: border-box !important; 
+        margin: 10px auto !important;  
+        height: 42px !important;       
+        display: block !important;          /* 🚨 恢复普通块级元素 */
+        text-align: center !important;      /* 🚨 让光标和 Password 提示词乖乖水平居中 */
+    }
+
+    .loginpage .worker a {
+        width: 100% !important;        
+        max-width: 100% !important;    
+        box-sizing: border-box !important; 
+        margin: 10px auto !important;  
+        height: 42px !important;       
+        display: flex !important;           /* 🚨 将按钮本身变成弹性盒子 */
+        align-items: center !important;     /* 🚨 核心：强制里面的 Login 文字绝对垂直居中！ */
+        justify-content: center !important; /* 🚨 核心：强制里面的 Login 文字水平居中！ */
+    }
+
+    /* ==========================================
+       📱 修改密码面板 (.changepass) 完美防溢出适配
+       ========================================== */
+    .changepass {
+        width: 85% !important;         /* 🚨 核心：解除 450px 死宽，改为百分比自适应 */
+        max-width: 340px !important;   /* 与主登录框保持一致的宽度，视觉统一 */
+        padding: 25px 20px !important; /* 稍微缩小手机端的内边距 */
+        box-sizing: border-box !important;
+    }
+
+    /* 🚨 核心：手机屏幕太窄，将“标签”和“输入框”从左右并排强制改为上下排列 */
+    .changepass .iptgroup {
+        flex-direction: column !important; 
+        align-items: flex-start !important;
+        gap: 8px !important; 
+    }
+
+    /* 解除 170px 的死宽，让文字靠左对齐，显得更紧凑整洁 */
+    .changepass .label {
+        width: 100% !important;
+        text-align: left !important;
+        font-size: 13px !important;
+    }
+
+    .changepass .iptgroup input {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        height: 42px !important;
+    }
+
+    /* 调整底部确认/取消按钮的间距，防止太靠边 */
+    .changepass .passbt {
+        padding: 0 30px !important; 
+        margin-top: 15px !important;
+    }
+}

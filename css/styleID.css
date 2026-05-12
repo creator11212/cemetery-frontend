@@ -1,0 +1,109 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+header{
+    background-color:black;
+    height:80px;
+    width:100%;
+}
+h1{
+    color:white;
+    position: absolute;
+    left: 5vw;
+    top: 0;
+    line-height:80px;
+    background-image:url('../Images/image.png');
+    background-repeat:no-repeat;
+    background-position:center;
+    background-size: contain;
+    width: 80px;
+    text-indent: -9999px;
+}
+header ul{
+    position: absolute;
+    right:5vw;
+    top:0;
+    line-height:80px;
+}
+header li{
+    display:inline;
+    margin-right: 4vw;
+}
+header a{
+    color:white;
+    text-decoration:none;
+}
+header a:hover{
+    text-decoration:underline;
+}
+.description{
+    background-color:antiquewhite;
+    color:white;
+    height:85vh;
+    background-image:url('../Images/Sea1.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.description h2{
+    font-size: 60px;
+}
+.description p{
+    font-size: 25px;
+    margin:25px;
+}
+.description a{
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    border:1px solid white;
+    padding:10px 20px;
+    border-radius: 5px;
+}
+.slogan{
+    background-color: #485652;
+    color:white;
+    font-size: 20px;
+    height:125px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.churches{
+    display: flex;
+}
+.churches img{
+    width: 40%;
+    height: auto;
+}
+.info{
+    width:60%;
+    background-color:antiquewhite ;
+    color:black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.info h2{
+    font-size: 50px;
+    margin-bottom: 20px;
+}
+.info p{
+    text-align: center;
+    line-height: 3em;
+}
+footer{
+    background-color: rgb(0, 0, 0);
+    color:white;
+    font-size: 12px;
+    height:40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
