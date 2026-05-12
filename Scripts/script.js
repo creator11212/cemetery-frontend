@@ -998,15 +998,37 @@ if (scrollThumb && scrollContainer && scrollBar) {
 
 document.addEventListener('DOMContentLoaded', () => {
     const darkModeBtn = document.getElementById('darkmodebt');
-    console.log("找到按钮了吗？", darkModeBtn); // 在控制台看结果
+    const darkModeIcon = darkModeBtn ? darkModeBtn.querySelector('i') : null;
 
-    if (darkModeBtn) {
+    // 1. 【初始化】检查浏览器是否存过“深色模式”
+    const savedTheme = localStorage.getItem('theme');
+    
+    // 如果之前设过深色，或者之前没设过但系统偏好深色
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        if (darkModeIcon) {
+            darkModeIcon.classList.replace('fa-sun', 'fa-moon'); // 变成月亮
+        }
+    }
+
+    // 2. 【点击事件】
+    if (darkModeBtn && darkModeIcon) {
         darkModeBtn.addEventListener('click', () => {
-            alert("点击成功！正在切换模式..."); // 💡 加上这行暴力测试
+            // 切换 body 的类名
             document.body.classList.toggle('dark-theme');
-            console.log("当前 Body 的 Class:", document.body.className);
+            
+            // 判断当前是什么模式，并存入“记忆”
+            if (document.body.classList.contains('dark-theme')) {
+                localStorage.setItem('theme', 'dark');
+                darkModeIcon.classList.replace('fa-sun', 'fa-moon'); // 切换到月亮图标
+            } else {
+                localStorage.setItem('theme', 'light');
+                darkModeIcon.classList.replace('fa-moon', 'fa-sun'); // 切换回太阳图标
+            }
+
+            // 增加一个小小的点击动效（可选）
+            darkModeBtn.style.transform = 'scale(0.9)';
+            setTimeout(() => darkModeBtn.style.transform = 'none', 150);
         });
-    } else {
-        console.error("错误：找不到 ID 为 darkmodebt 的按钮！");
     }
 });
