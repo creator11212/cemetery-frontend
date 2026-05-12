@@ -998,25 +998,15 @@ if (scrollThumb && scrollContainer && scrollBar) {
 
 document.addEventListener('DOMContentLoaded', () => {
     const darkModeBtn = document.getElementById('darkmodebt');
-    const darkModeIcon = darkModeBtn ? darkModeBtn.querySelector('i') : null;
+    console.log("找到按钮了吗？", darkModeBtn); // 在控制台看结果
 
-    if (darkModeBtn && darkModeIcon) {
+    if (darkModeBtn) {
         darkModeBtn.addEventListener('click', () => {
-            // 切换 body 的暗黑主题 class
+            alert("点击成功！正在切换模式..."); // 💡 加上这行暴力测试
             document.body.classList.toggle('dark-theme');
-            
-            // 按钮动效：按下去有个微缩放反馈
-            darkModeBtn.style.transform = 'scale(0.9)';
-            setTimeout(() => darkModeBtn.style.transform = 'none', 150);
-
-            // 切换图标：太阳 <-> 月亮
-            if (document.body.classList.contains('dark-theme')) {
-                darkModeIcon.classList.remove('fa-sun');
-                darkModeIcon.classList.add('fa-moon'); // 变成月亮
-            } else {
-                darkModeIcon.classList.remove('fa-moon');
-                darkModeIcon.classList.add('fa-sun');  // 变回太阳
-            }
+            console.log("当前 Body 的 Class:", document.body.className);
         });
+    } else {
+        console.error("错误：找不到 ID 为 darkmodebt 的按钮！");
     }
 });
