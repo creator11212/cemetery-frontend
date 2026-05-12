@@ -885,7 +885,7 @@ function startRouting(start, end) {
         }).addTo(cemeteryMap);
 
         cemeteryMap.fitBounds(currentRouteLayer.getBounds(), { padding: [50, 50], animate: true, duration: 1.5 });
-        Toast.fire({ icon: 'success', title: `Route Found! Distance: ${(path.weight * 1000).toFixed(0)}m` });
+        Toast.fire({ icon: 'success', timer: 2000, title: `Route Found! Distance: ${(path.weight * 1000).toFixed(0)}m` });
     } else {
         Swal.fire('No Route', 'Fail to generate the route. Please check if there is road network connection nearby.', 'error');
     }
