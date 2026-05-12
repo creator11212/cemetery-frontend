@@ -996,3 +996,27 @@ if (scrollThumb && scrollContainer && scrollBar) {
     });
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const darkModeBtn = document.getElementById('darkmodebt');
+    const darkModeIcon = darkModeBtn ? darkModeBtn.querySelector('i') : null;
+
+    if (darkModeBtn && darkModeIcon) {
+        darkModeBtn.addEventListener('click', () => {
+            // 切换 body 的暗黑主题 class
+            document.body.classList.toggle('dark-theme');
+            
+            // 按钮动效：按下去有个微缩放反馈
+            darkModeBtn.style.transform = 'scale(0.9)';
+            setTimeout(() => darkModeBtn.style.transform = 'none', 150);
+
+            // 切换图标：太阳 <-> 月亮
+            if (document.body.classList.contains('dark-theme')) {
+                darkModeIcon.classList.remove('fa-sun');
+                darkModeIcon.classList.add('fa-moon'); // 变成月亮
+            } else {
+                darkModeIcon.classList.remove('fa-moon');
+                darkModeIcon.classList.add('fa-sun');  // 变回太阳
+            }
+        });
+    }
+});
