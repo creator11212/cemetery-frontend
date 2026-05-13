@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="css/styleLO1.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+</head>
+<body>
+    <section class="loginpage">
+        <div class="Choose">
+            <h1>WELCOME</h1>
+            <div class="guest">
+                <i class="fa-regular fa-user"></i>
+                <p><a href="#">Guest</a></p>
+                <p>Explore our services without an account.</p>
+            </div>
+            <div class="worker">
+                <i class="fa-regular fa-user"></i>
+                <p>Worker</p>
+                <a href="#" id="loginBtn">Login</a>
+                <div class="passfield">
+                    <input type="password" placeholder="Password" spellcheck="false" required>
+                    <button id="loginconfbt" class="icon-btn">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                    <button id="changebt" class="icon-btn">
+                        <i class="fa-solid fa-key"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="changepass">
+            <div class="passipt">
+                <div class="iptgroup">
+                    <span class="label">Old Password </span>
+                    <input type="password" placeholder="Old Password" spellcheck="false" required>
+                </div>
+                <div class="iptgroup">
+                    <span class="label">New Password </span>
+                    <input type="password" placeholder="New Password" spellcheck="false" required>
+                </div>
+                <div class="iptgroup">
+                    <span class="label">Confirm New Password </span>
+                    <input type="password" placeholder="Confirm New Password" spellcheck="false" required>
+                </div>
+            </div>
+            <div class="passbt">
+                <button id="cancelPwdBt" class="icon-btn" title="Cancel">
+                    <i class="fa-solid fa-ban"></i>
+                </button>
+                <button id="confirmPwdBt" class="icon-btn" title="Confirm">
+                    <i class="fa-solid fa-check"></i>
+                </button>
+            </div>
+        </section>
+    </section>
+    <section class="mainpage">
+        <div class="datapart">
+            <div class="actionbar">
+                <button id="uploadbt" class="icon-btn">
+                    <i class="fa-solid fa-upload"></i>
+                    <span>upload</span>
+                </button>
+                <button id="clearRouteBt" class="icon-btn">
+                    <i class="fa-solid fa-eraser"></i>
+                    <span>clean the map</span>
+                </button>
+            </div>
+            <div class="infopart">
+                <div class="datadisplay">
+                    <div class="custom-scrollbar">
+                        <div class="scroll-thumb" id="scrollThumb"></div>
+                    </div>
+                    <div class="scroll-container" id="plot-list"></div>
+                </div>
+                <div class="plotdetail" id="plot-detail">
+                    <div class="detail-header">
+                        <h2 id="detailTitle">Plot Number</h2>
+                    </div>
+                    <div class="detail-content">
+                        <div class="info-row"><span class="info-label">Status:</span><span class="info-val" id="plotStatus">Loading...</span></div>
+                        <div class="info-row"><span class="info-label">Area:</span><span class="info-val" id="plotArea">---</span></div>
+                        <div class="occupants-container" id="occupantsList"></div>
+                    </div>
+                    <div class="info-footer">
+                        <button id="closeDetailbt" class="icon-btn">
+                            <i class="fa-solid fa-arrow-rotate-left"></i>
+                        </button>
+                        <button id="editbt" class="icon-btn">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                            <span>edit</span>
+                        </button>
+                        <button id="navbt" class="icon-btn">
+                            <i class="fa-solid fa-diamond-turn-right"></i>
+                            <span>Go!</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main1">
+            <div class="searchpart">
+                <input type="search" placeholder="Enter name or plot number...">
+                <button id="searchbt" class="icon-btn">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <button id="darkmodebt" class="icon-btn">
+                    <i class="fa-regular fa-sun"></i>
+                </button>
+                <button id="backbt" class="icon-btn">
+                    <i class="fa-solid fa-arrow-rotate-left"></i>
+                </button>
+            </div>
+            <div class="mapcontainer">
+                <div id="map"></div>
+            </div>
+        </div>
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="Scripts/script.js"></script>
+</body>
+</html>
