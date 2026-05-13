@@ -2,14 +2,14 @@
  * ============================================================================
  * CEMETERY MANAGEMENT SYSTEM - MAIN SCRIPT
  * Architecture: 
- * 1. Global State & Config
- * 2. Auth & User Management (Login, Logout, Change Password)
- * 3. UI & Utility Systems (Plot List, Search, Upload Excel)
- * 4. Plot Detail & Edit Engine (Show, Update, Delete Graves/Plots)
- * 5. Map & Navigation Engine (Leaflet, GPS, Pathfinding)
+ * 1. GLOBAL STATE & CONFIGURATION
+ * 2. AUTH, PERMISSIONS & USER MANAGEMENT (Login, Logout, Change Password, Guest Mode)
+ * 3. UI, THEME & UTILITIES (Plot List, Search, Upload, Dark Mode)
+ * 4. MOBILE INTERACTION ENGINE (Bottom Sheet Drawer, Custom Scrollbar)
+ * 5. PLOT DETAIL & EDIT ENGINE (Show, Update, Delete Graves/Plots)
+ * 6. MAP & NAVIGATION ENGINE (Leaflet, GPS, Pathfinding, Clear Route)
  * ============================================================================
  */
-
 
 /* ============================================================================
  * 1. GLOBAL STATE & CONFIGURATION
@@ -39,7 +39,7 @@ let gpsMarker = null;
 
 
 /* ============================================================================
- * 2. AUTH & USER MANAGEMENT (Login, Logout, Change Password)
+ * 2. AUTH, PERMISSIONS & USER MANAGEMENT
  * ============================================================================ */
 
 // --- Login Logic ---
@@ -74,6 +74,7 @@ loginConfirmBtn?.addEventListener('click', async function(e) {
         const result = await response.json();
 
         if (response.ok && result.success) {
+            sessionStorage.setItem('cemetery_user_role', 'worker');
             loginPage.classList.add('exit');
             document.body.classList.add('is-mainpage');
 
@@ -86,6 +87,7 @@ loginConfirmBtn?.addEventListener('click', async function(e) {
                     mainPage.classList.add('show');
                     initPlotListSystem();
                     initCemeteryMap();
+                    checkPermissions();
                 }, 200); 
             }, 800);
         } else {
@@ -221,9 +223,92 @@ loginConfirmBtn?.addEventListener('click', async function(e) {
     }
 })();
 
+// --- Guest Mode & Permissions ---
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('https://cemetery-backend.onrender.com/').catch(() => {});
+    const passwordInput = document.querySelector('.worker .passfield input[type="password"]');
+    const arrowBtn = document.querySelector('.worker .passfield button');
+    if (passwordInput && arrowBtn) {
+        passwordInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                e.preventDefault(); 
+                arrowBtn.click(); 
+                arrowBtn.style.transform = "scale(0.9)";
+                setTimeout(() => arrowBtn.style.transform = "none", 150);
+            }
+        });
+    }
+    const searchInput = document.querySelector('.searchpart input[type="search"]');
+    const searchBtn = document.getElementById('searchbt');
+    if (searchInput && searchBtn) {
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); 
+                searchInput.blur(); 
+                searchBtn.click();
+            }
+        });
+    }  
+    const guestLink = document.querySelector('.guest a');
+    
+    if (guestLink) {
+        guestLink.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            sessionStorage.setItem('cemetery_user_role', 'guest');
+
+            const loginPage = document.querySelector('.loginpage');
+            const mainPage = document.querySelector('.mainpage'); 
+            
+            if (loginPage && mainPage) {
+                loginPage.classList.add('exit');
+                document.body.classList.add('is-mainpage');
+
+                setTimeout(() => {
+                    loginPage.style.display = 'none';
+                    mainPage.style.display = 'flex'; 
+                    
+                    setTimeout(() => {
+                        mainPage.classList.add('show');
+                        initPlotListSystem();
+                        initCemeteryMap();
+                        checkPermissions(); 
+                    }, 200); 
+                }, 800); 
+            }
+        });
+    }
+});
+
+function checkPermissions() {
+    const userRole = sessionStorage.getItem('cemetery_user_role');
+    const editBtns = document.querySelectorAll('#editbt');
+    const uploadBtns = document.querySelectorAll('#uploadbt');
+    
+    if (userRole === 'guest') {
+        console.warn("🚶‍♂️ Guest Mode Active.");
+        editBtns.forEach(btn => {
+            btn.style.setProperty('display', 'none', 'important');
+            if(btn.parentElement) btn.parentElement.style.gridTemplateColumns = 'repeat(2, 1fr)';
+        });
+        uploadBtns.forEach(btn => {
+            btn.style.setProperty('display', 'none', 'important');
+        });
+    } else {
+        console.log("👨‍💻 Admin Mode: Restoring all buttons.");
+        editBtns.forEach(btn => {
+            btn.style.setProperty('display', 'flex', 'important'); 
+            if(btn.parentElement) btn.parentElement.style.gridTemplateColumns = 'repeat(3, 1fr)';
+        });
+        uploadBtns.forEach(btn => {
+            btn.style.setProperty('display', 'flex', 'important'); 
+        });
+    }
+}
+window.addEventListener('DOMContentLoaded', checkPermissions);
+
 
 /* ============================================================================
- * 3. UI & UTILITY SYSTEMS (Plot List, Search, Upload)
+ * 3. UI, THEME & UTILITIES
  * ============================================================================ */
 
 // --- Plot List Scroller ---
@@ -329,6 +414,7 @@ function initPlotListSystem() {
         }
     });
 })();
+
 // --- Search System ---
 (function initSearchSystem() {
     const searchInput = document.querySelector('.searchpart input[type="search"]');
@@ -339,7 +425,17 @@ function initPlotListSystem() {
     const handleSearch = () => {
         const query = searchInput.value.trim();
         if (!query) {
-            return Toast.fire({ icon: 'info', title: 'Input Required', text: 'Please enter a Plot Number.', timer: 2500 });
+            return Toast.fire({ icon: 'info', title: 'Please enter the number.', timer: 2000 });
+        }
+        if (!plotCenters.hasOwnProperty(query)) {
+            return Swal.fire({
+                icon: 'error',
+                title: 'The plot does not exist.',
+                text: `Sorry, could not find the plot. "${query}" , Please check the input.`,
+                confirmButtonText: 'yes',
+                heightAuto: false,
+                timer: 2500
+            });
         }
         showPlotDetail(query);
         searchInput.value = '';
@@ -352,9 +448,110 @@ function initPlotListSystem() {
     });
 })();
 
+// --- Dark Mode Toggle ---
+document.addEventListener('DOMContentLoaded', () => {
+    const darkModeBtn = document.getElementById('darkmodebt');
+    const darkModeIcon = darkModeBtn ? darkModeBtn.querySelector('i') : null;
+
+    if (darkModeBtn && darkModeIcon) {
+        darkModeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            
+            darkModeBtn.style.transform = 'scale(0.9)';
+            setTimeout(() => darkModeBtn.style.transform = 'none', 150);
+
+            if (document.body.classList.contains('dark-theme')) {
+                darkModeIcon.classList.remove('fa-sun');
+                darkModeIcon.classList.add('fa-moon'); 
+            } else {
+                darkModeIcon.classList.remove('fa-moon');
+                darkModeIcon.classList.add('fa-sun');  
+            }
+        });
+    }
+});
+
 
 /* ============================================================================
- * 4. PLOT DETAIL & EDIT ENGINE
+ * 4. MOBILE INTERACTION ENGINE
+ * ============================================================================ */
+document.body.style.overscrollBehavior = 'none';
+
+// --- Bottom Sheet Drawer ---
+const drawer = document.querySelector('.datapart');
+let touchStartY = 0;
+
+if (drawer) {
+    drawer.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    drawer.addEventListener('touchmove', (e) => {
+        const touchY = e.touches[0].clientY;
+        const drawerTop = drawer.getBoundingClientRect().top;
+        
+        if (touchY - drawerTop < 50) {
+            if (e.cancelable) e.preventDefault(); 
+        }
+    }, { passive: false }); 
+
+    drawer.addEventListener('touchend', (e) => {
+        const touchEndY = e.changedTouches[0].clientY;
+        const swipeDistance = touchStartY - touchEndY;
+        const threshold = 60; 
+
+        if (swipeDistance > threshold) {
+            drawer.classList.remove('is-collapsed');
+            drawer.classList.add('is-expanded');
+        } else if (swipeDistance < -threshold) {
+            if (drawer.classList.contains('is-expanded')) {
+                drawer.classList.remove('is-expanded');
+            } else {
+                drawer.classList.add('is-collapsed');
+            }
+        }
+    }, { passive: true });
+}
+
+// --- Custom Scrollbar Touch ---
+const scrollContainer = document.querySelector('.scroll-container');
+const scrollBar = document.querySelector('.custom-scrollbar');
+const scrollThumb = document.querySelector('.scroll-thumb');
+
+if (scrollThumb && scrollContainer && scrollBar) {
+    let isDraggingThumb = false;
+    let startY, startScrollTop;
+
+    scrollThumb.addEventListener('touchstart', (e) => {
+        isDraggingThumb = true;
+        startY = e.touches[0].pageY;
+        startScrollTop = scrollContainer.scrollTop;
+        scrollThumb.style.background = "#ffffff"; 
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!isDraggingThumb) return;
+        
+        const deltaY = e.touches[0].pageY - startY;
+        const trackHeight = scrollBar.clientHeight;
+        const thumbHeight = scrollThumb.clientHeight;
+        const scrollableSpace = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+        const thumbTravelSpace = Math.max(trackHeight - thumbHeight, 1); 
+        const ratio = scrollableSpace / thumbTravelSpace;
+        
+        scrollContainer.scrollTop = startScrollTop + (deltaY * ratio);
+        if (e.cancelable) e.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener('touchend', () => {
+        isDraggingThumb = false;
+        scrollThumb.style.background = "rgba(255, 255, 255, 0.8)"; 
+    });
+}
+
+
+/* ============================================================================
+ * 5. PLOT DETAIL & EDIT ENGINE
  * ============================================================================ */
 
 // --- Show Details ---
@@ -519,7 +716,7 @@ document.getElementById('closeDetailbt')?.addEventListener('click', () => {
             
             removeCardBtn.onclick = async () => {
                 const currentGrave = card.getAttribute('data-grave');
-                if (!currentGrave) return card.remove(); // Unsaved blank card
+                if (!currentGrave) return card.remove(); 
 
                 const result = await Swal.fire({
                     title: 'Delete this Grave?',
@@ -684,7 +881,7 @@ document.getElementById('closeDetailbt')?.addEventListener('click', () => {
 
 
 /* ============================================================================
- * 5. MAP & NAVIGATION ENGINE (Leaflet, GeoJSON, Pathfinding)
+ * 6. MAP & NAVIGATION ENGINE
  * ============================================================================ */
 
 function initCemeteryMap() {
@@ -782,7 +979,7 @@ function initCemeteryMap() {
     cemeteryMap.on('locationfound', function(e) {
         const userLocation = e.latlng;
         if (!cemeteryBounds.contains(userLocation) && !outOfBoundsAlertShown) {
-            Swal.fire({ toast: true, position: 'top', showConfirmButton: false, timer: 5000, timerProgressBar: true, icon: 'warning', title: 'Outside Cemetery', text: 'Real-time navigation may be inaccurate.', background: 'rgba(30, 41, 59, 0.95)', customClass: { popup: 'capsule-toast' } });
+            Swal.fire({ toast: true, position: 'top', showConfirmButton: false, timer: 2500, timerProgressBar: true, icon: 'warning', title: 'Outside Cemetery', text: 'Real-time navigation may be inaccurate.', background: 'rgba(30, 41, 59, 0.95)', customClass: { popup: 'capsule-toast' } });
             outOfBoundsAlertShown = true;
         }
 
@@ -885,150 +1082,53 @@ function startRouting(start, end) {
         }).addTo(cemeteryMap);
 
         cemeteryMap.fitBounds(currentRouteLayer.getBounds(), { padding: [50, 50], animate: true, duration: 1.5 });
-        Toast.fire({ icon: 'success', timer: 2000, title: `Route Found! Distance: ${(path.weight * 1000).toFixed(0)}m` });
+        Toast.fire({ icon: 'success', title: `Route Found! Distance: ${(path.weight * 1000).toFixed(0)}m` });
     } else {
         Swal.fire('No Route', 'Fail to generate the route. Please check if there is road network connection nearby.', 'error');
     }
 }
 
-// ==========================================
-// 📱 移动端交互核心引擎 (底部抽屉 + 自定义滑块)
-// ==========================================
-
-// 1. 全局：锁死页面底板，防止 iOS/Android 橡皮筋回弹
-document.body.style.overscrollBehavior = 'none';
-
-// ==========================================
-// 模块 A: 底部抽屉 (Bottom Sheet) 升降手势逻辑
-// ==========================================
-const drawer = document.querySelector('.datapart');
-let touchStartY = 0;
-
-if (drawer) {
-    // 监听触摸开始：记录手指按下的初始坐标
-    drawer.addEventListener('touchstart', (e) => {
-        touchStartY = e.touches[0].clientY;
-    }, { passive: true });
-
-    // 监听触摸移动：拦截抽屉顶部的滑动，防止带动整个页面
-    drawer.addEventListener('touchmove', (e) => {
-        const touchY = e.touches[0].clientY;
-        const drawerTop = drawer.getBoundingClientRect().top;
-        
-        // 如果手指是在抽屉顶部 50px 区域（小白条附近）滑动的
-        if (touchY - drawerTop < 50) {
-            // 彻底切断浏览器对页面的拖拽动作，防止页面乱跑
-            if (e.cancelable) e.preventDefault(); 
-        }
-    }, { passive: false }); 
-
-    // 监听触摸结束：根据滑动距离和方向，决定“变高”还是“变矮”
-    drawer.addEventListener('touchend', (e) => {
-        const touchEndY = e.changedTouches[0].clientY;
-        const swipeDistance = touchStartY - touchEndY;
-        const threshold = 60; // 划动超过 60px 才触发
-
-        if (swipeDistance > threshold) {
-            // 🚀 向上划：变全屏
-            drawer.classList.remove('is-collapsed');
-            drawer.classList.add('is-expanded');
-        } else if (swipeDistance < -threshold) {
-            // 🚀 向下拉
-            if (drawer.classList.contains('is-expanded')) {
-                // 如果原本是全屏，拉一下变回“中间默认”状态（即移除所有状态类）
-                drawer.classList.remove('is-expanded');
-            } else {
-                // 如果原本是中间状态，拉一下缩成底部极简小条
-                drawer.classList.add('is-collapsed');
-            }
-        }
-    }, { passive: true });
-}
-
-// ==========================================
-// 模块 B: 自定义滑块 (Scrollbar) 触摸拖拽逻辑
-// ==========================================
-const scrollContainer = document.querySelector('.scroll-container');
-const scrollBar = document.querySelector('.custom-scrollbar');
-// 🚨 这里已经修正了类名，确保 JS 能精准抓到你的白色小滑块
-const scrollThumb = document.querySelector('.scroll-thumb');
-
-if (scrollThumb && scrollContainer && scrollBar) {
-    let isDraggingThumb = false;
-    let startY, startScrollTop;
-
-    // 1. 监听手指直接按住白色的滑块本体
-    scrollThumb.addEventListener('touchstart', (e) => {
-        isDraggingThumb = true;
-        startY = e.touches[0].pageY;
-        startScrollTop = scrollContainer.scrollTop;
-        
-        // 视觉反馈：按住时变成纯白色，提示用户已抓住
-        scrollThumb.style.background = "#ffffff"; 
-    }, { passive: true });
-
-    // 2. 监听手指在屏幕上滑动
-    document.addEventListener('touchmove', (e) => {
-        if (!isDraggingThumb) return;
-        
-        const deltaY = e.touches[0].pageY - startY;
-        
-        // 精准计算“齿轮比”：内容可滚动的空间 / 滑块可滑动的空间
-        const trackHeight = scrollBar.clientHeight;
-        const thumbHeight = scrollThumb.clientHeight;
-        const scrollableSpace = scrollContainer.scrollHeight - scrollContainer.clientHeight;
-        const thumbTravelSpace = Math.max(trackHeight - thumbHeight, 1); 
-        
-        const ratio = scrollableSpace / thumbTravelSpace;
-        
-        // 强制列表跟随滑块同比例滚动
-        scrollContainer.scrollTop = startScrollTop + (deltaY * ratio);
-        
-        // 杀掉浏览器原生动作，防止拖滑块时整个页面被拽跑
-        if (e.cancelable) e.preventDefault();
-    }, { passive: false });
-
-    // 3. 手指松开，结束拖拽
-    document.addEventListener('touchend', () => {
-        isDraggingThumb = false;
-        // 恢复滑块稍暗的默认颜色
-        scrollThumb.style.background = "rgba(255, 255, 255, 0.8)"; 
-    });
-}
-
+// --- Clear Route Logic ---
 document.addEventListener('DOMContentLoaded', () => {
-    const darkModeBtn = document.getElementById('darkmodebt');
-    const darkModeIcon = darkModeBtn ? darkModeBtn.querySelector('i') : null;
-
-    // 1. 【初始化】检查浏览器是否存过“深色模式”
-    const savedTheme = localStorage.getItem('theme');
+    const clearRouteBtn = document.getElementById('clearRouteBt');
     
-    // 如果之前设过深色，或者之前没设过但系统偏好深色
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark-theme');
-        if (darkModeIcon) {
-            darkModeIcon.classList.replace('fa-sun', 'fa-moon'); // 变成月亮
-        }
-    }
+    if (clearRouteBtn) {
+        clearRouteBtn.addEventListener('click', () => {
+            let isCleared = false;
 
-    // 2. 【点击事件】
-    if (darkModeBtn && darkModeIcon) {
-        darkModeBtn.addEventListener('click', () => {
-            // 切换 body 的类名
-            document.body.classList.toggle('dark-theme');
-            
-            // 判断当前是什么模式，并存入“记忆”
-            if (document.body.classList.contains('dark-theme')) {
-                localStorage.setItem('theme', 'dark');
-                darkModeIcon.classList.replace('fa-sun', 'fa-moon'); // 切换到月亮图标
-            } else {
-                localStorage.setItem('theme', 'light');
-                darkModeIcon.classList.replace('fa-moon', 'fa-sun'); // 切换回太阳图标
+            if (typeof currentRouteLayer !== 'undefined' && currentRouteLayer) {
+                cemeteryMap.removeLayer(currentRouteLayer);
+                currentRouteLayer = null;
+                isCleared = true;
             }
 
-            // 增加一个小小的点击动效（可选）
-            darkModeBtn.style.transform = 'scale(0.9)';
-            setTimeout(() => darkModeBtn.style.transform = 'none', 150);
+            if (typeof customStartMarker !== 'undefined' && customStartMarker) {
+                cemeteryMap.removeLayer(customStartMarker);
+                customStartMarker = null;
+                isCleared = true;
+            }
+
+            if (window.isSelectingStart) {
+                window.isSelectingStart = false;
+                document.body.classList.remove('selecting-start');
+                isCleared = true;
+            }
+
+            if (isCleared) {
+                Toast.fire({ 
+                    icon: 'success', 
+                    title: 'Route Cleared',
+                    background: 'rgba(34, 197, 94, 0.75)',
+                    timer: 1500
+                });
+            } else {
+                Toast.fire({ 
+                    icon: 'info', 
+                    title: 'Map is already clean',
+                    background: 'rgba(59, 130, 246, 0.75)',
+                    timer: 1500
+                });
+            }
         });
     }
 });
