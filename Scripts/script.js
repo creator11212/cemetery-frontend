@@ -891,7 +891,7 @@ function initCemeteryMap() {
         minZoom: 18,
         maxBounds: myBounds,
         maxBoundsViscosity: 0.7
-    }).setView([45.4335, -75.5340], 20);
+    }).setView([45.4332, -75.5340], 20);
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
         maxZoom: 22,
