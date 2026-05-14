@@ -883,7 +883,13 @@ document.getElementById('closeDetailbt')?.addEventListener('click', () => {
  * ============================================================================ */
 
 function initCemeteryMap() {
-    if (cemeteryMap !== null) cemeteryMap.remove();
+    if (typeof cemeteryMap !== 'undefined' && cemeteryMap !== null) {
+        cemeteryMap.remove();
+    }
+    var mapContainer = document.getElementById('map');
+    if (mapContainer != null) {
+        mapContainer._leaflet_id = null; // 这行代码是干掉这个报错的神器！
+    }
 
     cemeteryMap = L.map('map', { minZoom: 19 }).setView([45.4335, -75.5340], 20);
     const southWest = L.latLng(45.43301, -75.53424); 
