@@ -934,7 +934,7 @@ function initCemeteryMap() {
     fetch('geojson/pathline.geojson')
         .then(res => res.json())
         .then(async data => {
-            L.geoJSON(data, { style: { color: '#64748b', weight: 6, opacity: 0.85, lineCap: 'round', lineJoin: 'round' }, interactive: false }).addTo(cemeteryMap);
+            L.geoJSON(data, { style: { color: '#666666', weight: 7, opacity: 0.95, lineCap: 'round', lineJoin: 'round' }, interactive: false }).addTo(cemeteryMap);
 
             let flatNetwork = turf.flatten(data);
             const densifiedFeatures = [];
