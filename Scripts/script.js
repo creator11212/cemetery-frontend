@@ -883,15 +883,7 @@ document.getElementById('closeDetailbt')?.addEventListener('click', () => {
  * ============================================================================ */
 
 function initCemeteryMap() {
-    if (typeof cemeteryMap !== 'undefined' && cemeteryMap !== null) {
-        cemeteryMap.remove();
-    }
-    var mapContainer = document.getElementById('map');
-    if (mapContainer != null) {
-        mapContainer._leaflet_id = null;
-    }
-
-    cemeteryMap = L.map('map', { minZoom: 19 }).setView([45.4335, -75.5340], 20);
+    if (cemeteryMap !== null) cemeteryMap.remove();
     const southWest = L.latLng(45.4310, -75.5360); 
     const northEast = L.latLng(45.4360, -75.5310); 
     const myBounds = L.latLngBounds(southWest, northEast);
