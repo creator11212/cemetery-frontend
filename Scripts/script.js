@@ -979,7 +979,7 @@ function initCemeteryMap() {
     cemeteryMap.on('locationfound', function(e) {
         const userLocation = e.latlng;
         if (!cemeteryBounds.contains(userLocation) && !outOfBoundsAlertShown) {
-            Swal.fire({ toast: true, position: 'top', showConfirmButton: false, timer: 2500, timerProgressBar: true, icon: 'warning', title: 'Outside Cemetery', text: 'Real-time navigation may be inaccurate.', background: 'rgba(30, 41, 59, 0.95)', customClass: { popup: 'capsule-toast' } });
+            Swal.fire({ toast: true, position: 'top', showConfirmButton: false, timer: 2500, timerProgressBar: true, icon: 'warning', title: 'Outside Cemetery', text: 'AutoGPS may be inaccurate.', background: 'rgba(30, 41, 59, 0.95)', customClass: { popup: 'capsule-toast' } });
             outOfBoundsAlertShown = true;
         }
 
@@ -1055,7 +1055,7 @@ document.getElementById('navbt')?.addEventListener('click', async () => {
             customStartMarker = null;
         }
 
-        Toast.fire({ icon: 'info', title: 'Selection Mode', text: 'Please select the start point', timer: 3000 });
+        Toast.fire({ icon: 'info', title: 'Selection Mode', text: 'Please select the start', timer: 3000 });
     }
 });
 
@@ -1117,14 +1117,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isCleared) {
                 Toast.fire({ 
                     icon: 'success', 
-                    title: 'Route Cleared',
+                    title: 'Action Confirmed',
+                    text: 'Route Cleared',
                     background: 'rgba(34, 197, 94, 0.75)',
                     timer: 1500
                 });
             } else {
                 Toast.fire({ 
                     icon: 'info', 
-                    title: 'Map is already clean',
+                    title: 'Attention',
+                    text: 'Map is already clean.',
                     background: 'rgba(59, 130, 246, 0.75)',
                     timer: 1500
                 });
