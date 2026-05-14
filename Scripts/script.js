@@ -886,6 +886,14 @@ function initCemeteryMap() {
     if (cemeteryMap !== null) cemeteryMap.remove();
 
     cemeteryMap = L.map('map', { minZoom: 19 }).setView([45.4335, -75.5340], 20);
+    const southWest = L.latLng(45.43301, -75.53424); 
+    const northEast = L.latLng(45.43403, -75.53325); 
+    const myBounds = L.latLngBounds(southWest, northEast);
+    cemeteryMap = L.map('map', { 
+        minZoom: 18,
+        maxBounds: myBounds,
+        maxBoundsViscosity: 1.0
+    }).setView([45.4335, -75.5340], 20);
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
         maxZoom: 22,
