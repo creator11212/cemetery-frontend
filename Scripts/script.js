@@ -225,7 +225,7 @@ loginConfirmBtn?.addEventListener('click', async function(e) {
 
 // --- Guest Mode & Permissions ---
 document.addEventListener('DOMContentLoaded', () => {
-    fetch('https://cemetery-backend.onrender.com/').catch(() => {});
+    fetch('https://cemetery-backend.onrender.com/api/wakeup').catch(() => {});
     const passwordInput = document.querySelector('.worker .passfield input[type="password"]');
     const arrowBtn = document.querySelector('.worker .passfield button');
     if (passwordInput && arrowBtn) {
@@ -285,7 +285,6 @@ function checkPermissions() {
     const uploadBtns = document.querySelectorAll('#uploadbt');
     
     if (userRole === 'guest') {
-        console.warn("🚶‍♂️ Guest Mode Active.");
         editBtns.forEach(btn => {
             btn.style.setProperty('display', 'none', 'important');
             if(btn.parentElement) btn.parentElement.style.gridTemplateColumns = 'repeat(2, 1fr)';
@@ -294,7 +293,6 @@ function checkPermissions() {
             btn.style.setProperty('display', 'none', 'important');
         });
     } else {
-        console.log("👨‍💻 Admin Mode: Restoring all buttons.");
         editBtns.forEach(btn => {
             btn.style.setProperty('display', 'flex', 'important'); 
             if(btn.parentElement) btn.parentElement.style.gridTemplateColumns = 'repeat(3, 1fr)';
