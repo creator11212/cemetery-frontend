@@ -979,7 +979,7 @@ function initCemeteryMap() {
     cemeteryMap.on('locationfound', function(e) {
         const userLocation = e.latlng;
         if (!cemeteryBounds.contains(userLocation) && !outOfBoundsAlertShown) {
-            Swal.fire({ toast: true, position: 'top', showConfirmButton: false, timer: 2500, timerProgressBar: true, icon: 'warning', title: 'Outside Cemetery', text: 'AutoGPS may be inaccurate.', background: 'rgba(30, 41, 59, 0.95)', customClass: { popup: 'capsule-toast' } });
+            Swal.fire({ toast: true, position: 'top', showConfirmButton: false, timer: 2500, timerProgressBar: true, icon: 'warning', title: 'Outside Cemetery', text: 'AutoGPS is inaccurate.', background: 'rgba(30, 41, 59, 0.95)', customClass: { popup: 'capsule-toast' } });
             outOfBoundsAlertShown = true;
         }
 
