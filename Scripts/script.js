@@ -888,17 +888,17 @@ function initCemeteryMap() {
     }
     var mapContainer = document.getElementById('map');
     if (mapContainer != null) {
-        mapContainer._leaflet_id = null; // 这行代码是干掉这个报错的神器！
+        mapContainer._leaflet_id = null;
     }
 
     cemeteryMap = L.map('map', { minZoom: 19 }).setView([45.4335, -75.5340], 20);
-    const southWest = L.latLng(45.43301, -75.53424); 
-    const northEast = L.latLng(45.43403, -75.53325); 
+    const southWest = L.latLng(45.4310, -75.5360); 
+    const northEast = L.latLng(45.4360, -75.5310); 
     const myBounds = L.latLngBounds(southWest, northEast);
     cemeteryMap = L.map('map', { 
         minZoom: 18,
         maxBounds: myBounds,
-        maxBoundsViscosity: 1.0
+        maxBoundsViscosity: 0.7
     }).setView([45.4335, -75.5340], 20);
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
